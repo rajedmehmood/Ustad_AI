@@ -12,7 +12,7 @@ Ustad AI is a Generative AI-powered tutor designed specifically for Pakistani Ma
 
 Frontend: Streamlit (Python)
 
-AI Model: Google Gemini 1.5 Flash (Multimodal)
+AI Model: Google Gemini 2.5 Flash (Multimodal)
 
 Logic: Custom System Prompting for "Tutor Persona"
 
@@ -21,5 +21,6 @@ Logic: Custom System Prompting for "Tutor Persona"
 Image Analysis: Students upload textbook pages directly.
 
 Roman Urdu Output: Explanations are in the language students actually speak.
+
 
 Cultural Context: Uses local analogies (Cricket, Biryani, Rickshaws) to explain science.
