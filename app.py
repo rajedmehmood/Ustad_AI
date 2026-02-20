@@ -2,6 +2,7 @@ import streamlit as st
 import google.generativeai as genai
 from PIL import Image
 import os
+import time
 
 # --- PAGE CONFIGURATION ---
 st.set_page_config(
@@ -26,22 +27,21 @@ st.markdown("""
 
 st.write("Upload a picture of your textbook (Physics, Bio, Chem, etc.), and I will explain it in **Roman Urdu** with desi examples!")
 
-# --- API SETUP (HIDDEN) ---
-# This looks for the key in Hugging Face Secrets or Streamlit Secrets
+# --- API SETUP (SECURE) ---
 api_key = os.environ.get("GOOGLE_API_KEY")
 
 if not api_key:
-    # Fallback for local testing if using secrets.toml
     try:
         api_key = st.secrets["GOOGLE_API_KEY"]
     except:
-        st.error("🚨 API Key not found. Please set GOOGLE_API_KEY in Secrets.")
+        st.error("🚨 API Key configuration error. Please set GOOGLE_API_KEY in Hugging Face Settings > Secrets.")
         st.stop()
 
 # Configure the AI model
 try:
     genai.configure(api_key=api_key)
-    model = genai.GenerativeModel('gemini-1.5-flash')
+    # SWITCHING TO GEMINI 2.5 FLASH TO USE A DIFFERENT QUOTA BUCKET
+    model = genai.GenerativeModel('gemini-2.5-flash')
 except Exception as e:
     st.error(f"Error configuring API: {e}")
     st.stop()
@@ -71,7 +71,7 @@ uploaded_file = st.file_uploader("📸 Upload Textbook Page or Diagram", type=["
 
 if uploaded_file is not None:
     image = Image.open(uploaded_file)
-    st.image(image, caption='Your Textbook Page', use_container_width=True)
+    st.image(image, caption='Your Textbook Page', use_column_width=True)
 
     user_question = st.text_input("Koi khaas sawal hai? (Optional)", placeholder="E.g., Is diagram ko samjha den...")
 
@@ -91,7 +91,9 @@ if uploaded_file is not None:
 
             except Exception as e:
                 st.error(f"Something went wrong: {e}")
+                if "429" in str(e):
+                    st.warning("⚠️ High Traffic: The AI is busy. Please create a NEW Google API Key with a different Google Account to fix this instantly.")
 
 # --- FOOTER ---
 st.markdown("---")
-st.caption("Built for HEC GenAI Hackathon | Powered by Google Gemini 1.5 Flash")
+st.caption("Built for HEC GenAI Hackathon | Powered by Google Gemini 2.5 Flash")
